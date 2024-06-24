@@ -1,0 +1,8 @@
+apiVersiob: v1
+kind: pod
+metadata:
+  name: pod-01
+spec:
+  containers:
+    - name: frontend
+      image: docker.io/poojasunil/frontend
