@@ -3,8 +3,10 @@ kind: pod
 metadata:
   name: pod-02
 spec:
-  container:
+  containers:
     - name: nginx
       image: docker.io/nginx
     - name: mongodb
       image: docker.io/mongo
+
+#      creates two images in one pod
