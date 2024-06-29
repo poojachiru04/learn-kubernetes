@@ -19,6 +19,8 @@ spec:
       - name: nginx
         image: docker.io/nginx
 
+#  create 3 pods at a time using replicas
+
 ---
 apiVersion: apps/v1
 kind: pod
