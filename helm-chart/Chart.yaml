@@ -1,0 +1,4 @@
+apiVersion: v2
+name: sample-chart
+description: A sample helm chart
+version: 1.0.0

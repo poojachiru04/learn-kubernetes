@@ -1,0 +1,17 @@
+{{- if .Values.schemaJob.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: schema-load-{{ .Values.appName }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: load
+          image: docker.io/poojasunil/schema-loader
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.appName }}
+      restartPolicy: Never
+  backoffLimit: 4
+  {{- end }}

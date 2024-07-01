@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    appName: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      appName: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        appName: {{ .Values.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.appName }}
+          image: docker.io/poojasunil/{{ .Values.appName }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.appName }}
+

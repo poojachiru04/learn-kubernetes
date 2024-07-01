@@ -1,0 +1,21 @@
+appName: backend
+
+service:
+  type: ClusterIP
+  port: 8080
+
+replicas: 1
+
+env:
+  DB_HOST: mysql
+  login_user: root
+  login_password: ExpenseApp@1
+  login_host: mysql
+  app_repo: "https://github.com/poojachiru04/expense-backend"
+  schema_file: /app/schema/backend.sql
+
+schemaJob:
+  enabled: true
+
+
+
