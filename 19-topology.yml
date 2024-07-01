@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: failure-domain.beta.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              tier: frontend
+      containers:
+        - name: nginx
+          image: docker.io/nginx:1.24
+
+---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: frontend1
+#   labels:
+#     app: guestbook1
+#     tier: frontend1
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       tier: frontend1
+#   template:
+#     metadata:
+#       labels:
+#         tier: frontend1
+#     spec:
+#       containers:
+#       - name: nginx
+#         image: docker.io/nginx:1.24

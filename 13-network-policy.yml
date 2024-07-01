@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dmz
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mz
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: dmz
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: docker.io/nginx
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: mz
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: dmz
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: mz
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: docker.io/nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug
+  namespace: default
+spec:
+  containers:
+    - name: debug
+      image: docker.io/poojasunil/debug
+---
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: allow-dmz
+#   namespace: mz
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: nginx
+#   policyTypes:
+#   - Ingress
+#   ingress:
+#   - from:
+#     - namespaceSelector:
+#         matchLabels:
+#           app: nginx
+#       podSelector:
+#         matchLabels:
+#           app: nginx
+#     ports:
+#     - protocol: TCP
+#       port: 80
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny
+  namespace: mz
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+    - Ingress
+    - Egress

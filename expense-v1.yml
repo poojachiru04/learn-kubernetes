@@ -1,0 +1,102 @@
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: frontend
+#   labels:
+#     app: frontend
+# spec:
+#   containers:
+#     - name: frontend
+#       image: docker.io/poojasunil/frontend
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: frontend
+# spec:
+#   type: LoadBalancer
+#   selector:
+#     app: frontend
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 80
+# ---
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: backend
+#   labels:
+#     app: backend
+# spec:
+#   containers:
+#     - name: backend
+#       image: docker.io/poojasunil/backend
+#       ports:
+#       - containerPort: 80
+#       env:
+#         - name: DB_HOST
+#           value: "mysql"
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: backend
+# spec:
+#   selector:
+#     app: backend
+#   ports:
+#     - protocol: TCP
+#       port: 8080
+#       targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  containers:
+    - name: mysqll
+      image: docker.io/mysql:8.0
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: ExpenseApp@1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+# ---
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: schema-load
+# spec:
+#   template:
+#     spec:
+#       containers:
+#       - name: load
+#         image: docker.io/poojasunil/schema-loader
+#         env:
+#           - name: login_user
+#             value: root
+#           - name: login_password
+#             value: ExpenseApp@1
+#           - name: login_host
+#             value: mysql
+#           - name: app_repo
+#             value: "https://github.com/poojachiru04/expense-backend"
+#           - name: schema_file
+#             value: /app/schema/backend.sql
+#       restartPolicy: Never
+#   backoffLimit: 4

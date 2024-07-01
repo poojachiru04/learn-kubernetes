@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+        - name: nginx
+          image: docker.io/nginx:1.24
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "50m"
+            limits:
+              memory: "150Mi"
+              cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    tier: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: frontend-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: frontend
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: 100m
+          memory: 50Mi
+        maxAllowed:
+          cpu: 1
+          memory: 500Mi
+        controlledResources: ["cpu", "memory"]
